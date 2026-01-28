@@ -2,7 +2,7 @@ name: Build and Push C App
 
 on:
   push:
-    branches: [master]
+    branches: [master] 
 
 jobs:
   build:
