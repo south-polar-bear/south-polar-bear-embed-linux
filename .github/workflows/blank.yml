@@ -1,0 +1,33 @@
+name: Build and Push C App
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # 关键权限
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .                   # 构建上下文目录
+          file: ./Dockerfile           # ✅ 明确指定 Dockerfile 路径
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/mydockerbuilder:latest
+            ghcr.io/${{ github.repository_owner }}/mydockerbuilder:${{ github.sha }}
+          echo test, and deploy your project.
