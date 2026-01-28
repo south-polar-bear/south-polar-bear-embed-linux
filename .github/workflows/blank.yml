@@ -1,1 +1,15 @@
+name: Build and Push C App
 
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # 关键权限
+
+    steps:
+      - uses: actions/checkout@v4
