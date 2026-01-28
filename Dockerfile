@@ -4,6 +4,7 @@ FROM ubuntu:latest
 # 安装 GCC 编译器
 RUN apt-get update && \
     apt-get install -y gcc && \
+    apt-get install -y build-essential && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
