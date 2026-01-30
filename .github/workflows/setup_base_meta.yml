@@ -1,0 +1,60 @@
+name: setup_base_meta
+
+on:
+  workflow_dispatch:  # 仅手动触发
+    inputs:
+      docker_command:
+        description: '要在容器内执行的命令'
+        required: true
+        default: 'echo "Hello from Docker" && pwd && ls -la'
+        type: string
+
+jobs:
+  docker-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: polar_bear 
+      - name: Setup Yocto layers
+        run: |
+          mkdir -p  layers/
+          git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
+          git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
+          git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
+     
+      # 2. 登录到 GitHub Container Registry
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      # 3. 在指定 Docker 镜像中执行命令
+      - name: Execute command in Docker
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+            
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/workspace \
+            -w /workspace \
+            ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
+            sh -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              echo '开始执行构建命令'
+              cd /workspace
+            "
+       
+  
+      - name: Upload entire workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-backup
+          path: ${{ github.workspace }}
