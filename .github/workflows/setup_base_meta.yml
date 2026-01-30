@@ -59,3 +59,6 @@ jobs:
         with:
           name: workspace-backup
           path: ${{ github.workspace }}
+          exclude-patterns: |
+            # 留空表示不排除任何内容，上传所有文件
+          if-no-files-found: error
