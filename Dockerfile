@@ -1,6 +1,20 @@
 # 使用最新的 Ubuntu 作为基础镜像
 FROM ubuntu:latest
 
+# 一次性完成所有配置
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        locales \
+        ca-certificates \
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen en_US.UTF-8 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 设置环境变量
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # 安装 GCC 编译器
 RUN apt-get update && \
     apt-get install -y gcc && \
