@@ -1,0 +1,39 @@
+name: Run in Docker Image
+
+on:
+  workflow_dispatch:  # 仅手动触发
+    inputs:
+      docker_command:
+        description: '要在容器内执行的命令'
+        required: true
+        default: 'echo "Hello from Docker" && pwd && ls -la'
+        type: string
+
+jobs:
+  docker-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # 2. 登录到 GitHub Container Registry
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      # 3. 在指定 Docker 镜像中执行命令
+      - name: Execute command in Docker
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/workspace \
+            -w /workspace \
+            ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
+            sh -c "$DOCKER_COMMAND"
