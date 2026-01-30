@@ -37,9 +37,7 @@ jobs:
       # 3. 在指定 Docker 镜像中执行命令
       - name: Execute command in Docker
         env:
-          DOCKER_COMMAND: |
-            set -e  # 遇到错误立即退出
-            set -x  # 打印执行的命令（调试模式）
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
             
         run: |
           docker run \
@@ -47,7 +45,16 @@ jobs:
             -v "${{ github.workspace }}":/workspace \
             -w /workspace \
             ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
-            sh -c "$DOCKER_COMMAND"
+            sh -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              echo '开始执行构建命令'
+              cd /workspace
+              export PATH=/workspace/bitbake/bin:$PATH
+              bitbake-setup init --non-interactive poky-master poky-with-sstate distro/poky machine/qemux86-64
+            "
+       
+  
       - name: Upload entire workspace
         uses: actions/upload-artifact@v4
         with:
