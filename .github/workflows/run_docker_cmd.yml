@@ -17,7 +17,15 @@ jobs:
       # 1. 检出代码
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+        with:
+          path: polar_bear 
+      - name: Checkout BitBake repository
+        uses: actions/checkout@v4
+        with:
+          repository: openembedded/bitbake
+          ref: master  # 或特定的 tag/commit
+          path: bitbake  # 指定不同的目录
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用 token 访问
       # 2. 登录到 GitHub Container Registry
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -29,7 +37,10 @@ jobs:
       # 3. 在指定 Docker 镜像中执行命令
       - name: Execute command in Docker
         env:
-          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+          DOCKER_COMMAND: |
+            set -e  # 遇到错误立即退出
+            set -x  # 打印执行的命令（调试模式）
+            
         run: |
           docker run \
             --rm \
