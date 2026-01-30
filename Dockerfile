@@ -47,6 +47,13 @@ RUN apt-get update && \
     xz-utils \
     zstd && \
     rm -rf /var/lib/apt/lists/*
+RUN echo "=== Locale Test ===" && \
+    locale -a && \
+    echo "=== Current Locale ===" && \
+    locale && \
+    echo "=== Python Encoding ===" && \
+    python3 -c "import sys; print('Encoding:', sys.stdout.encoding)" || \
+    echo "Python not installed"
 # 复制 C 源代码
 #COPY hello.c .
 
