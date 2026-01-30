@@ -17,6 +17,8 @@ ENV LANG=en_US.UTF-8 \
     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # 安装 GCC 编译器
 RUN apt-get update && \
+    apt-get install -y openssh-client && \
+    apt-get install -y repo && \
     apt-get install -y gcc && \
     apt-get install -y build-essential && \
     apt-get clean && \
