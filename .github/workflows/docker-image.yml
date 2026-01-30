@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
-     - 'Dockfile'           # src目录下的所有文件
+     - 'Dockerfile'           # src目录下的所有文件
   pull_request:
     branches: [ "main" ]
     paths:
-     - 'Dockfile'           # src目录下的所有文件
+     - 'Dockerfile'           # src目录下的所有文件
 
 jobs:
   build:
