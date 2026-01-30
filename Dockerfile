@@ -7,7 +7,32 @@ RUN apt-get update && \
     apt-get install -y build-essential && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN  apt-get install -y build-essential chrpath cpio debianutils diffstat file gawk  git iputils-ping libacl1 locales python3 python3-git python3-jinja2 python3-pexpect python3-pip python3-subunit socat texinfo unzip wget xz-utils zstd
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    chrpath \
+    cpio \
+    debianutils \
+    diffstat \
+    file \
+    gawk \
+    git \
+    iputils-ping \
+    libacl1 \
+    locales \
+    python3 \
+    python3-git \
+    python3-jinja2 \
+    python3-pexpect \
+    python3-pip \
+    python3-subunit \
+    socat \
+    texinfo \
+    unzip \
+    wget \
+    xz-utils \
+    zstd && \
+    rm -rf /var/lib/apt/lists/*
 # 复制 C 源代码
 #COPY hello.c .
 
