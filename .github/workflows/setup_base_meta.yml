@@ -50,6 +50,7 @@ jobs:
               set -x  # 打印执行的命令
               echo '开始执行构建命令'
               cd /workspace
+              TEMPLATECONF=$PWD/layers/meta-yocto/meta-poky/conf/templates/default source ./layers/openembedded-core/oe-init-build-env
             "
        
   
