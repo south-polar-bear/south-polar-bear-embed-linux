@@ -37,3 +37,8 @@ jobs:
             -w /workspace \
             ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
             sh -c "$DOCKER_COMMAND"
+      - name: Upload entire workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-backup
+          path: ${{ github.workspace }}
