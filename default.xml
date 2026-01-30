@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- 定义远程仓库地址的别名 -->
+  <remote name="oe" fetch="https://git.openembedded.org" />
+  <remote name="yocto" fetch="https://git.yoctoproject.org" />
+
+  <!-- 默认属性，会被各个 project 继承 -->
+  <default revision="refs/tags/yocto-5.3"  <!-- 默认版本 -->
+          remote="oe"                     <!-- 默认远程 -->
+          sync-j="4" />                   <!-- 并行同步线程数 -->
+
+  <!-- 具体定义要管理的项目（仓库） -->
+  <project name="bitbake" path="layers/bitbake" />
+  <project name="openembedded-core" path="layers/openembedded-core" />
+  <project name="meta-yocto" remote="yocto" path="layers/meta-yocto" />
+</manifest>
