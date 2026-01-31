@@ -21,6 +21,9 @@ jobs:
           path: polar_bear 
       - name: Setup Yocto layers
         run: |
+          curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/repo
+          chmod a+x ~/repo
+          sudo mv ~/repo /usr/local/bin/repo
           repo init polar_bear/default.xml
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
