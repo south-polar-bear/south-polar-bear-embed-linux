@@ -22,7 +22,7 @@ jobs:
       - name: Setup Yocto layers
         run: |
           sudo apt-get install -y repo
-          repo init ./polar_bear 
+          repo init -u ./polar_bear 
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
       #    git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
