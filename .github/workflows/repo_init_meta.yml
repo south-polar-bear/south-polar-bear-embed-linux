@@ -57,7 +57,7 @@ jobs:
               cd /workspace
               ls -alh
               TEMPLATECONF=$PWD/layers/meta-yocto/meta-poky/conf/templates/default 
-              ./layers/openembedded-core/oe-init-build-env
+              source ./layers/openembedded-core/oe-init-build-env
             "
        
   
