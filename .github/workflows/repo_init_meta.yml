@@ -50,7 +50,7 @@ jobs:
             -v "${{ github.workspace }}":/workspace \
             -w /workspace \
             ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
-            sh -c " 
+            bash -c " 
               set -e  # 遇到错误立即退出
               set -x  # 打印执行的命令
               cd /workspace
