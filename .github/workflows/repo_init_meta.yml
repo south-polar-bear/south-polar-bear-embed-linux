@@ -1,4 +1,4 @@
-name: setup_base_meta
+name: repo init download code 
 
 on:
   workflow_dispatch:  # 仅手动触发
