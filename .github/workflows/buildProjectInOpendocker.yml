@@ -1,4 +1,4 @@
-name: buildproject 
+name: buildprojectInOpenDocker
 
 on:
   workflow_dispatch:  # 仅手动触发
