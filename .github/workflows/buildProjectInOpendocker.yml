@@ -1,6 +1,9 @@
 name: buildprojectInOpenDocker
 
 on:
+  schedule:
+    # 北京时间 02:00 = UTC 18:00 (前一天)
+    - cron: '0 18 * * *'
   workflow_dispatch:  # 仅手动触发
     inputs:
       docker_command:
@@ -12,7 +15,11 @@ on:
 jobs:
   docker-run:
     runs-on: ubuntu-latest
-    
+    env:
+      DEBIAN_FRONTEND: noninteractive # 关闭 apt 交互提示
+      YOCTO_BUILD_DIR: build          # Yocto 构建目录（可自定义）
+      DL_DIR: ${{ github.workspace }}/build/downloads # 全局 download 目录
+      SSTATE_DIR: ${{ github.workspace }}/build/sstate-cache # 全局 sstate 目录
     steps:
       # 1. 检出代码
       - name: Setup Yocto layers
@@ -34,7 +41,21 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+        # 步骤4：核心 - 缓存 DL_DIR 和 SSTATE_DIR（恢复/保存缓存）
+      - name: Cache Yocto DL_DIR and SSTATE_DIR
+        uses: actions/cache@v5.0.3
+        id: yocto-cache # 缓存标识，后续可通过 steps.yocto-cache.outputs.cache-hit 判断是否命中
+        with:
+          # 要缓存的目录：DL_DIR（下载） + SSTATE_DIR（sstate 缓存）
+          path: |
+            ${{ env.DL_DIR }}
+            ${{ env.SSTATE_DIR }}
+          # 缓存键：固定前缀 + 系统版本 + 核心配置文件哈希（保证配置不变则命中）
+          # 哈希文件包含：bblayers.conf（层配置）、local.conf（构建配置）、配方依赖
+          key: yocto-cache-${{ runner.os }}-${{ hashFiles('**/conf/bblayers.conf', '**/conf/local.conf', 'poky/meta/conf/bitbake.conf') }}
+          # 回退缓存：模糊匹配，配置微调时拉取最接近的旧缓存（最大化利用率）
+          restore-keys: |
+            yocto-cache-${{ runner.os }}-  
       # 3. 在指定 Docker 镜像中执行命令
       - name: Execute command in Docker
         env:
@@ -53,7 +74,7 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
-              bitbake core-image-tiny-initramfs
+              bitbake busybox
             "
 
       - name: Upload deploy artifacts
