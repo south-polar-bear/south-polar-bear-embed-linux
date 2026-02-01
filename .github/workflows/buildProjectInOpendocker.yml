@@ -53,7 +53,7 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
-              bitbake core-image-tiny
+              bitbake core-image-tiny-initramfs
             "
 
       - name: Upload deploy artifacts
