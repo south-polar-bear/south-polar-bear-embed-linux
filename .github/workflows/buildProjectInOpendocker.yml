@@ -43,7 +43,7 @@ jobs:
         run: |
           docker run \
             --rm \
-            -v "${{ github.workspace }}":home/pokyuser/workspace \
+            -v "${{ github.workspace }}":/home/pokyuser/workspace \
             -w /home/pokyuser/workspace \
             ghcr.io/crops/poky:ubuntu-22.04 \
             bash -c " 
