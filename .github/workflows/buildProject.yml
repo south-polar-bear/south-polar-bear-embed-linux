@@ -1,4 +1,4 @@
-name: repo init download code 
+name: buildproject 
 
 on:
   workflow_dispatch:  # 仅手动触发
