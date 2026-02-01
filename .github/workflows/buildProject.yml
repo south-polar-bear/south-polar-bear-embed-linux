@@ -1,0 +1,89 @@
+name: repo init download code 
+
+on:
+  workflow_dispatch:  # 仅手动触发
+    inputs:
+      docker_command:
+        description: '要在容器内执行的命令'
+        required: true
+        default: 'echo "Hello from Docker" && pwd && ls -la'
+        type: string
+
+jobs:
+  docker-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: Setup Yocto layers
+        run: |
+          set -e  # 遇到错误立即退出
+          set -x  # 打印执行的命令
+          ls -alh 
+          sudo apt-get install -y repo
+          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git --depth=1
+          repo sync 
+      #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
+      #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
+      #    git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
+     
+      # 2. 登录到 GitHub Container Registry
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      # 3. 在指定 Docker 镜像中执行命令
+      - name: Execute command in Docker
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+            
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/workspace \
+            -w /workspace \
+            ghcr.io/${{ github.repository_owner }}/docker_south_polar_bear:latest \
+            bash -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              cd /workspace
+              ls -alh
+              TEMPLATECONF=/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
+              source ./layers/openembedded-core/oe-init-build-env
+              bitbake core-image-minimal
+            "
+
+      - name: Upload deploy artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: yocto-deploy-outputs
+          path: tmp/deploy/**
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload images separately
+        uses: actions/upload-artifact@v4
+        with:
+          name: yocto-images
+          path: tmp/deploy/images/**/*
+          if-no-files-found: warn
+    
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: yocto-packages
+          path: |
+            tmp/deploy/rpm/**
+            tmp/deploy/ipk/**
+            tmp/deploy/deb/**
+          if-no-files-found: warn
+    
+      - name: Upload SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: yocto-sdk
+          path: tmp/deploy/sdk/*.sh
+          if-no-files-found: warn
