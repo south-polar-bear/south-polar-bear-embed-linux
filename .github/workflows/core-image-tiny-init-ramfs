@@ -1,4 +1,4 @@
-name: buildprojectInOpenDocker
+name: buildtinyimage
 
 on:
   schedule:
