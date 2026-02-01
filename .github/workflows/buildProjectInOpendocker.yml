@@ -53,14 +53,14 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
-              bitbake core-image-minimal
+              bitbake core-image-tiny
             "
 
       - name: Upload deploy artifacts
         uses: actions/upload-artifact@v4
         with:
           name: yocto-deploy-outputs
-          path: tmp/deploy/**
+          path: ${{ github.workspace }}/build/tmp/deploy/**
           retention-days: 7
           if-no-files-found: error
 
@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: yocto-images
-          path: tmp/deploy/images/**/*
+          path: ${{ github.workspace }}/build/tmp/deploy/images/**/*
           if-no-files-found: warn
     
       - name: Upload packages
@@ -76,14 +76,14 @@ jobs:
         with:
           name: yocto-packages
           path: |
-            tmp/deploy/rpm/**
-            tmp/deploy/ipk/**
-            tmp/deploy/deb/**
+            ${{ github.workspace }}/build/tmp/deploy/rpm/**
+            ${{ github.workspace }}/build/tmp/deploy/ipk/**
+            ${{ github.workspace }}/build/tmp/deploy/deb/**
           if-no-files-found: warn
     
       - name: Upload SDK
         uses: actions/upload-artifact@v4
         with:
           name: yocto-sdk
-          path: tmp/deploy/sdk/*.sh
+          path: ${{ github.workspace }}/build/tmp/deploy/sdk/*.sh
           if-no-files-found: warn
