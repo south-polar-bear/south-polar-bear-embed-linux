@@ -21,7 +21,6 @@ jobs:
           ls -alh 
           sudo apt-get install -y repo tree
           repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
-          repo sync 
           tree -a 
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
