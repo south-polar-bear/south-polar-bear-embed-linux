@@ -17,12 +17,12 @@ jobs:
       # 1. 检出代码
       - name: Setup Yocto layers
         run: |
-          set -e  # 遇到错误立即退出
           set -x  # 打印执行的命令
+          set  +e
           ls -alh 
-          sudo apt-get install -y repo
-          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git --depth=1
-          repo sync 
+          sudo apt-get install -y repo tree
+          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
+          tree -a 
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
       #    git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
