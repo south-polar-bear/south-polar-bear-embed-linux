@@ -18,6 +18,7 @@ jobs:
       - name: Setup Yocto layers
         run: |
           set -x  # 打印执行的命令
+          set  +e
           ls -alh 
           sudo apt-get install -y repo tree
           repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
