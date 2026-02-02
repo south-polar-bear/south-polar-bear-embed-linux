@@ -1,0 +1,76 @@
+name: do_fetch_miminal
+
+on:
+  schedule:
+    # 北京时间 02:00 = UTC 18:00 (前一天)
+    - cron: '0 18 * * *'
+  workflow_dispatch:  # 仅手动触发
+    inputs:
+      docker_command:
+        description: '要在容器内执行的命令'
+        required: true
+        default: 'echo "Hello from Docker" && pwd && ls -la'
+        type: string
+
+jobs:
+  docker-run:
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive # 关闭 apt 交互提示
+      YOCTO_BUILD_DIR: build          # Yocto 构建目录（可自定义）
+      DL_DIR: ${{ github.workspace }}/build/downloads # 全局 download 目录
+      SSTATE_DIR: ${{ github.workspace }}/build/sstate-cache # 全局 sstate 目录
+    steps:
+      # 1. 检出代码
+      - name: Setup Yocto layers
+        run: |
+          set -e  # 遇到错误立即退出
+          set -x  # 打印执行的命令
+          ls -alh 
+          sudo apt-get install -y repo
+          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git --depth=1
+          repo sync 
+      #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
+      #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
+      #    git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
+     
+      # 2. 登录到 GitHub Container Registry
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        # 步骤4：核心 - 缓存 DL_DIR 和 SSTATE_DIR（恢复/保存缓存）
+      - name: Cache Yocto DL_DIR and SSTATE_DIR
+        uses: actions/cache@v5.0.3
+        id: yocto-download # 缓存标识，后续可通过 steps.yocto-cache.outputs.cache-hit 判断是否命中
+        with:
+          # 要缓存的目录：DL_DIR（下载） + SSTATE_DIR（sstate 缓存）
+          path: |
+            ${{ env.DL_DIR }}
+          # 缓存键：固定前缀 + 系统版本 + 核心配置文件哈希（保证配置不变则命中）
+          # 哈希文件包含：bblayers.conf（层配置）、local.conf（构建配置）、配方依赖
+          key: yocto-download-${{ runner.os }}-${{ hashFiles('**/conf/bblayers.conf', '**/conf/local.conf', 'poky/meta/conf/bitbake.conf') }}
+          # 回退缓存：模糊匹配，配置微调时拉取最接近的旧缓存（最大化利用率）
+          restore-keys: |
+            yocto-download-${{ runner.os }}-  
+      # 3. 在指定 Docker 镜像中执行命令
+      - name: fetchall
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/home/pokyuser/workspace \
+            -w /home/pokyuser/workspace \
+            ghcr.io/crops/poky:ubuntu-22.04 \
+            bash -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              cd ~/workspace
+              ls -alh
+              TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
+              source ./layers/openembedded-core/oe-init-build-env
+              bitbake core-image-minimal --runall=fetch
+            "
