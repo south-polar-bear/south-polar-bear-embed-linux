@@ -21,7 +21,7 @@ jobs:
           set -x  # 打印执行的命令
           ls -alh 
           sudo apt-get install -y repo
-          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git --depth=1
+          repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
           repo sync 
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
