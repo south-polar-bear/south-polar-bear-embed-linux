@@ -48,7 +48,7 @@ jobs:
         with:
           # 要缓存的目录：DL_DIR（下载） + SSTATE_DIR（sstate 缓存）
           path: |
-            ${{ env.SSTATE_DIR }}
+            ${{ env.DL_DIR }}
           # 缓存键：固定前缀 + 系统版本 + 核心配置文件哈希（保证配置不变则命中）
           # 哈希文件包含：bblayers.conf（层配置）、local.conf（构建配置）、配方依赖
           key: yocto-download-cache-${{ runner.os }}-${{ hashFiles('${{ github.workspace }}/build/conf/bblayers.conf', '${{ github.workspace }}/build/conf/local.conf') }}
