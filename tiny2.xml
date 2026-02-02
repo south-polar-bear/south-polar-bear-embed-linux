@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest  xmlns:xi="http://www.w3.org/2001/XInclude">
+    <!-- 包含同目录下的sub_modules.xml，直接写文件名即可 -->
+    <xi:include href="default.xml"/>
+     <!-- 如果您有一个默认的远程配置，这里会继承它的设置 -->
+    <remote name="tiny" fetch="https://github.com/south-polar-bear" />
+   
+    
+    <!-- 指定要同步的 project -->
+    <project name="tinyimage" remote="tiny" 
+    path="./" />
+</manifest>
