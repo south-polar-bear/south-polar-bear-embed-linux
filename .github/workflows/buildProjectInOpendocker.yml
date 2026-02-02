@@ -76,6 +76,44 @@ jobs:
               source ./layers/openembedded-core/oe-init-build-env
               bitbake core-image-minimal --runall=fetch
             "
+      - name: meta-toolchain
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+            
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/home/pokyuser/workspace \
+            -w /home/pokyuser/workspace \
+            ghcr.io/crops/poky:ubuntu-22.04 \
+            bash -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              cd ~/workspace
+              ls -alh
+              TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
+              source ./layers/openembedded-core/oe-init-build-env
+              bitbake meta-toolchain
+            "  
+      - name: meta-toolchain
+        env:
+          DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
+            
+        run: |
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}":/home/pokyuser/workspace \
+            -w /home/pokyuser/workspace \
+            ghcr.io/crops/poky:ubuntu-22.04 \
+            bash -c " 
+              set -e  # 遇到错误立即退出
+              set -x  # 打印执行的命令
+              cd ~/workspace
+              ls -alh
+              TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
+              source ./layers/openembedded-core/oe-init-build-env
+              bitbake virtual/kernel
+            "  
       - name: Execute command in Docker
         env:
           DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
