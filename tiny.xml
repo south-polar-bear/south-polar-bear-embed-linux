@@ -8,5 +8,5 @@
     
     <!-- 指定要同步的 project -->
     <project name="tinyimage" remote="tiny" 
-    path="./" revision="refs/heads/main"/>
+    path="build" revision="refs/heads/main"/>
 </manifest>
