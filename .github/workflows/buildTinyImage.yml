@@ -104,7 +104,8 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
-              cat build/bblayers.conf
+              cat bblayers.conf
+              cat local.conf
             "
       - name: busybox
         env:
