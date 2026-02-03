@@ -104,6 +104,8 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
+              pwd
+              ls -alh
               cat bblayers.conf
               cat local.conf
             "
