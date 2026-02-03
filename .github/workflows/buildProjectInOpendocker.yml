@@ -42,7 +42,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
         # 步骤4：核心 - 缓存 DL_DIR 和 SSTATE_DIR（恢复/保存缓存）
-      - name: Cache Yocto DL_DIR and SSTATE_DIR
+      - name: cache  DL_DIR 
         uses: actions/cache@v5.0.3
         id: yocto-cache-download # 缓存标识，后续可通过 steps.yocto-cache.outputs.cache-hit 判断是否命中
         with:
@@ -60,7 +60,7 @@ jobs:
           # 回退缓存：模糊匹配，配置微调时拉取最接近的旧缓存（最大化利用率）
           restore-keys: |
             yocto-download-cache-${{ runner.os }}-  
-      - name: Cache Yocto DL_DIR and SSTATE_DIR
+      - name: Cache  SSTATE_DIR
         uses: actions/cache@v5.0.3
         id: yocto-cache # 缓存标识，后续可通过 steps.yocto-cache.outputs.cache-hit 判断是否命中
         with:
