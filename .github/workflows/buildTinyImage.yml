@@ -86,7 +86,8 @@ jobs:
           # 回退缓存：模糊匹配，配置微调时拉取最接近的旧缓存（最大化利用率）
           restore-keys: |
             yocto-sstate-cache-${{ runner.os }}-  
-  
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3.23
       - name: Execute command in Docker
         env:
           DOCKER_COMMAND: ${{ github.event.inputs.docker_command }}
@@ -106,8 +107,7 @@ jobs:
               source ./layers/openembedded-core/oe-init-build-env
               bitbake core-image-tiny-initramfs
             "  
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+     
       - name: Upload deploy artifacts
         uses: actions/upload-artifact@v4
         with:
