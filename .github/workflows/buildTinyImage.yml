@@ -30,6 +30,14 @@ jobs:
           sudo apt-get install -y repo
           repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
           repo sync 
+          tree -a
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: yocto-packages
+          path: |
+            ${{ github.workspace }}
+          if-no-files-found: warn   
       #    git clone -b yocto-5.3 https://git.openembedded.org/bitbake ./layers/bitbake
       #    git clone -b yocto-5.3 https://git.openembedded.org/openembedded-core ./layers/openembedded-core
       #    git clone -b yocto-5.3 https://git.yoctoproject.org/meta-yocto ./layers/meta-yocto
