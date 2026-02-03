@@ -30,7 +30,7 @@ jobs:
           sudo apt-get install -y repo
           repo init -u https://github.com/south-polar-bear/south-polar-bear-embed-linux.git -m tiny.xml --depth=1
           repo sync 
-          tree -a
+          
       - name: Upload packages
         uses: actions/upload-artifact@v4
         with:
@@ -104,7 +104,7 @@ jobs:
               ls -alh
               TEMPLATECONF=~/workspace/layers/meta-yocto/meta-poky/conf/templates/default 
               source ./layers/openembedded-core/oe-init-build-env
-              
+              cat build/bblayers.conf
             "
       - name: busybox
         env:
